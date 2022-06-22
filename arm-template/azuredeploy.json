@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location of the Managed Cluster resource."
+      }
+    }
+  },
+  "variables": {
+    "roleDefinitionContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+    "dsRoleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleDefinitionContributor'))]",
+    "dsRoleAssignmentId": "[guid(resourceGroup().id, variables('dsRoleDefinitionId'), resourceId('Microsoft.ManagedIdentity/identities', variables('wfInstallIdentity')))]",
+    "wfInstallIdentity": "wf-installer-identity"
+  },
+  "resources": [
+    {
+      "comments": "*** Azure Marketplace required usage attribution tracking GUID ***",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "pid-632959b9-efc0-453b-92b1-49be6ad3534d-partnercenter",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [
+          ]
+        }
+      }
+    },
+    {
+      "comments": "*** An Identity with access to (AKS) and run the Wayfinder installer ***",
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "[variables('wfInstallIdentity')]",
+      "apiVersion": "2018-11-30",
+      "location": "[parameters('location')]"
+    },
+    {
+      "comments": "*** allows Wayfinder installer Contributor access to the resource group ***",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2020-10-01-preview",
+      "name": "[variables('dsRoleAssignmentId')]",
+      "properties": {
+        "roleDefinitionId": "[variables('dsRoleDefinitionId')]",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('wfInstallIdentity')), '2018-11-30').principalId]",
+        "scope": "[resourceGroup().id]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('wfInstallIdentity'))]"
+      ]
+    }
+  ]
+}

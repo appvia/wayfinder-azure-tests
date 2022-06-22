@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/0.1.2-preview/CreateUIDefinition.MultiVm.json#",
+    "handler": "Microsoft.Azure.CreateUIDef",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "config": {
+            "isWizard": true,
+            "resourceTypes": [
+                "Microsoft.ManagedIdentity/userAssignedIdentities",
+                "Microsoft.Authorization/roleDefinitions",
+                "Microsoft.Authorization/roleAssignments",
+                "Microsoft.Resources/deploymentScripts",
+                "Microsoft.ContainerService/managedClusters",
+                "Microsoft.ContainerService/PodSecurityPolicyPreview",
+                "Microsoft.Network/publicIPAddresses"
+            ],
+            "basics": {
+                "description": "This template deploys [Wayfinder](https://www.appvia.io/wayfinder). Wayfinder provides creation and fleet management of cloud Kubernetes. For more information see [Wayfinder Documentation](https://docs.appvia.io/wayfinder).",
+                "subscription": {
+                    "constraints": {
+                        "validations": [
+                            {
+                                "permission": "Microsoft.ContainerInstance/allow",
+                                "message": "Must have allow permission with the Microsoft.ContainerInstance."
+                            }
+                        ]
+                    },
+                    "resourceProviders": [
+                        "Microsoft.ManagedIdentity",
+                        "Microsoft.Authorization",
+                        "Microsoft.Resources",
+                        "Microsoft.ContainerService",
+                        "Microsoft.ContainerInstance",
+                        "Microsoft.Network"
+                    ]
+                }
+            }
+        },
+        "basics": [
+        ],
+        "steps": [
+         ],
+        "outputs": {
+            "location": "[location()]"
+        }
+    }
+}
