@@ -14,7 +14,8 @@
     "roleDefinitionContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c",
     "dsRoleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('roleDefinitionContributor'))]",
     "dsRoleAssignmentId": "[guid(resourceGroup().id, variables('dsRoleDefinitionId'), resourceId('Microsoft.ManagedIdentity/identities', variables('wfInstallIdentity')))]",
-    "wfInstallIdentity": "wf-installer-identity"
+    "wfInstallIdentity": "wf-installer-identity",
+    "appviaTenant": "[equals(subscription().tenantId, '7a770e35-b455-4df2-a276-b07408438d9a')]"
   },
   "resources": [
     {
@@ -48,7 +49,8 @@
         "roleDefinitionId": "[variables('dsRoleDefinitionId')]",
         "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('wfInstallIdentity')), '2018-11-30').principalId]",
         "scope": "[resourceGroup().id]",
-        "principalType": "ServicePrincipal"
+        "principalType": "ServicePrincipal",
+        "delegatedManagedIdentityResourceId": "[if(variables('appviaTenant'), json('null'), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('wfInstallIdentity')))]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('wfInstallIdentity'))]"

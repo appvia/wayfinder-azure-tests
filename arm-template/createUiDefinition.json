@@ -36,10 +36,8 @@
                 }
             }
         },
-        "basics": [
-        ],
-        "steps": [
-         ],
+        "basics": [],
+        "steps": [],
         "outputs": {
             "location": "[location()]"
         }
